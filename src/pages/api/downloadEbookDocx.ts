@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     docx.on('error', (err) => console.error(err));
 
     // Function to add formatted text to a paragraph
-    const addFormattedText = (pObj: any, text: string, options = {}) => {
+    const addFormattedText = (pObj: any, text: string, options: { font_size?: number, bold?: boolean, italics?: boolean } = {}) => {
       const regex = /(\*\*|__)(.*?)\1|(\*|_)(.*?)\3/g; // matches bold and italic markdown
       let lastIndex = 0;
       let match;
@@ -85,12 +85,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     // Render the Table of Contents
-    toContent.split('\n').forEach((line) => {
+    toContent.split('\n').forEach((line: string) => {
       renderMarkdownLine(line, docx);
     });
 
     // Render the body content
-    bodyContent.split('\n').forEach((line) => {
+    bodyContent.split('\n').forEach((line: string) => {
       renderMarkdownLine(line, docx);
     });
 

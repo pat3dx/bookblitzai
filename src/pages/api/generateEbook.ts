@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import OpenAI from 'openai';
+import { OpenAI } from 'openai';
 
-const openai: OpenAIApi = new OpenAIApi(configuration);
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -14,8 +14,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     console.log('Parsing the outline');
-    const parsedOutline = parseOutline(outline);
-    console.log('Parsed outline:', parsedOutline);
+    const parsedOutline: {
+      title: string;
+      introduction: string;
+      chapters: Array<{ title: string; subchapters: Array<{ title: string }> }>;
+      thankYou: string;
+    } = {
+      title: '',
+      introduction: '',
+      chapters: [],
+      thankYou: '',
+    };
 
     // Initialize the eBook content with the title
     let ebookContent = `# ${parsedOutline.title}\n\n`;

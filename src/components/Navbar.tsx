@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface NavbarProps {
   userButton: React.ReactNode;
@@ -18,9 +18,9 @@ const Navbar: React.FC<NavbarProps> = ({ userButton }) => {
     if (user) {
       checkSubscription();
     }
-  }, [user]);
+  }, [user, checkSubscription]);
 
-  const checkSubscription = async () => {
+  const checkSubscription = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -29,15 +29,15 @@ const Navbar: React.FC<NavbarProps> = ({ userButton }) => {
       console.log('Navbar - User:', user);
       console.log('Navbar - User Metadata:', userMetadata);
       
-      setIsAdmin(userMetadata.isAdmin === true);
-      setIsSubscribed(userMetadata.subscription?.status === 'active' || userMetadata.isAdmin === true);
+      setIsAdmin(userMetadata.some(membership => membership.role === 'admin'));
+      setIsSubscribed(userMetadata.some(membership => membership.role === 'member' && membership.status === 'active') || userMetadata.some(membership => membership.role === 'admin'));
       
       console.log('Navbar - Is Admin:', isAdmin);
       console.log('Navbar - Is Subscribed:', isSubscribed);
     } catch (error) {
       console.error('Navbar - Error checking subscription:', error);
     }
-  };
+  }, [user]);
 
   return (
     <nav className="bg-white shadow-lg">

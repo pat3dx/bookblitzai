@@ -6,7 +6,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<{ message: stri
   console.log('Webhook received:', req.body);
 
   if (req.method === 'POST') {
-    const { id, email_addresses } = req.body.data;
+    const { id, email_addresses }: { id: string, email_addresses: Array<{ id: string, email_address: string }> } = req.body.data;
 
     // Extract the primary email address
     const primaryEmail = email_addresses.find((email: any) => email.id === req.body.data.primary_email_address_id)?.email_address;
@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<{ message: stri
 
     if (error) {
       console.error('Error inserting user into Supabase:', error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ message: error.message });
     }
 
     console.log('User added to Supabase:', { id: userId, email: primaryEmail });

@@ -93,7 +93,7 @@ const EbookGenerator = () => {
     }
   }, [user, checkSubscription]);
 
-  const checkSubscription = async () => {
+  const checkSubscription = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -102,15 +102,15 @@ const EbookGenerator = () => {
       console.log('User:', user);
       console.log('User Metadata:', userMetadata);
       
-      setIsAdmin(userMetadata.isAdmin === true);
-      setIsSubscribed(userMetadata.subscription?.status === 'active' || userMetadata.isAdmin === true);
+      setIsAdmin(userMetadata.some(membership => membership.role === 'admin'));
+      setIsSubscribed(userMetadata.some(membership => membership.role === 'member' && membership.status === 'active') || userMetadata.some(membership => membership.role === 'admin'));
       
       console.log('Is Admin:', isAdmin);
       console.log('Is Subscribed:', isSubscribed);
     } catch (error) {
       console.error('Error checking subscription:', error);
     }
-  };
+  }, [user]);
 
   if (!isSubscribed && !isAdmin) {
     console.log('Access denied. Is Subscribed:', isSubscribed, 'Is Admin:', isAdmin);

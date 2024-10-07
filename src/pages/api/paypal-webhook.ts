@@ -44,8 +44,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-async function handleSubscriptionCreated(data: any) {
-  const { id: subscription_id, plan_id, subscriber: { email_address, payer_id } } = data.resource;
+interface PayPalWebhookData {
+  id: string;
+  plan_id: string;
+  subscriber: {
+    email_address: string;
+    payer_id: string;
+  };
+  status?: string;
+}
+
+async function handleSubscriptionCreated(data: PayPalWebhookData) {
+  const { id: subscription_id, plan_id, subscriber: { email_address } } = data;
   
   const supabase_user_id = uuidv4();
 
