@@ -6,7 +6,6 @@ import ReactMarkdown from 'react-markdown';
 import 'tailwindcss/tailwind.css';
 import DownloadButton from '../../components/DownloadButton';
 import { useUser } from '@clerk/nextjs';
-import { supabase } from '../../lib/supabaseClient';
 
 const EbookGenerator = () => {
   const { user } = useUser();
@@ -92,7 +91,7 @@ const EbookGenerator = () => {
     if (user) {
       checkSubscription();
     }
-  }, [user]);
+  }, [user, checkSubscription]);
 
   const checkSubscription = async () => {
     if (!user) return;

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import officegen from 'officegen';
 import { PassThrough } from 'stream';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Buffer | { error: string }>) {
   try {
     const { fullEbookContent, title } = req.body;
 
@@ -96,7 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.setHeader('Content-Disposition', `attachment; filename="${title}.docx"`);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-    docx.generate(docxStream);
+    const buffer: Buffer = await docx.generateBuffer();
     docxStream.pipe(res);
   } catch (error) {
     console.error('Error generating DOCX:', error);
